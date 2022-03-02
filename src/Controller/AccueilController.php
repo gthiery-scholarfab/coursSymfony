@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Produit;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 //#[Route('/test')]
 class AccueilController extends AbstractController
@@ -39,15 +41,23 @@ class AccueilController extends AbstractController
     }
 
     #[Route('/produits', name: 'produits')]
-    public function listeProduits(): Response
+    public function listeProduits(ManagerRegistry $doctrine): Response
     {
-        return new Response("La liste des produits");
+        $repository = $doctrine->getRepository(Produit::class);
+        $listeProduits = $repository->findAll();
+        return $this->render('accueil/listeProduits.html.twig', [
+            'listeProduits' => $listeProduits,
+        ]);
     }
 
     #[Route('/produit/{id}', name: 'produit')]
-    public function afficheProduit($id): Response
+    public function afficheProduit($id, ManagerRegistry $doctrine): Response
     {
-        return new Response("Informations sur le produit n°$id");
+        $repository = $doctrine->getRepository(Produit::class);
+        $produit = $repository->find($id);
+        return $this->render('accueil/afficherProduit.html.twig', [
+            'produit' => $produit,
+        ]);
     }
 
     #[Route('/mes-produits/{id}', name: 'mes-produit')]
