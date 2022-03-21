@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Produit;
+use App\Form\ProduitType;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -82,5 +85,24 @@ class AccueilController extends AbstractController
     public function mesAchats2($annee, $idUtilisateur): Response
     {
         return new Response("Liste des produits achetés en $annee par l'utilisateur n°$idUtilisateur");
+    }
+
+    #[Route('/newproduit', name: 'newproduit')]
+    public function newProduit(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $produit = new Produit();
+        $form = $this->createForm(ProduitType::class, $produit);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() ) {
+            $produit = $form->getData();
+            $entityManager->persist($produit);
+            $entityManager->flush();
+            return $this->redirectToRoute("produits",[ ]);
+        }        
+        return $this->render('accueil/newProduit.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

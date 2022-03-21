@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\ProduitRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProduitRepository;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
@@ -36,6 +37,10 @@ class Produit
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
     private $categorie;
+
+    public function __construct(){
+        $this->setDateCreation(new \DateTime);
+    }
 
     public function getId(): ?int
     {
