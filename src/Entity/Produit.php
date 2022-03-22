@@ -5,6 +5,7 @@ namespace App\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProduitRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
@@ -14,7 +15,20 @@ class Produit
     #[ORM\Column(type: 'integer')]
     private $id;
 
+   /*  
+   symfony console doctrine:database:create
+   symfony console doctrine:migrations:migrate
+   symfony console doctrine:fixtures:load 
+   use Symfony\Component\Validator\Constraints as Assert;
+   */
+
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Length(
+        min: 5, 
+        max: 255, 
+        minMessage: 'Le nom doit faire {{ limit }} caractères minimum, vous avez tapé {{ value }}',
+        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum'
+        )]
     private $nom;
 
     #[ORM\Column(type: 'text', nullable: true)]

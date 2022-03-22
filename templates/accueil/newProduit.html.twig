@@ -1,7 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AccueilController!{% endblock %}
+{% block title %}Hello AccueilController!
+{% endblock %}
 
 {% block body %}
-    {{ form(form) }}
-{% endblock %}
+	{{ form(form, { attr: {'novalidate': 'novalidate'}}) }}
+		{#
+				    {{ form_start(form) }}
+					{{ form_widget(form.nom, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez le nom du produit'}})}}
+					{{ form_widget(form.description, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez une description'}})}}
+					{{ form_widget(form.prix, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez le prix'}})}}
+					{{ form_widget(form.stock, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez le stock'}})}}
+					{{ form_end(form) }}
+				    #}
+	{% endblock %}
