@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Entity\Produit;
+use App\Form\ImageType;
 use App\Form\ProduitType;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -99,9 +102,42 @@ class AccueilController extends AbstractController
             $produit = $form->getData();
             $entityManager->persist($produit);
             $entityManager->flush();
+            $this->addFlash("success", "Votre produit a bien été créé");
             return $this->redirectToRoute("produits",[ ]);
         }        
         return $this->render('accueil/newProduit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/newimage', name: 'newimage')]
+    public function newImage(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $image = new Image();
+        $form = $this->createForm(ImageType::class, $image);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() ) {
+            /** @var UploadedFile $image */ 
+            $image = $form->getData();
+            $imageUrl = $form->get('url')->getData();
+            if($imageUrl){
+                $newImageName = uniqid().".".$imageUrl->guessExtension();
+                try{
+                        $imageUrl->move(
+                            $this->getParameter('repimage'),
+                            $newImageName
+                        );
+                }
+                catch(e){  }
+                $image->setUrl($this->getParameter('prefixeimage').$newImageName);
+            }
+            $entityManager->persist($image);
+            $entityManager->flush();
+            $this->addFlash("success", "Votre image a bien été créée");
+            return $this->redirectToRoute("produits",[ ]);
+        }        
+        return $this->render('accueil/newImage.html.twig', [
             'form' => $form->createView(),
         ]);
     }
