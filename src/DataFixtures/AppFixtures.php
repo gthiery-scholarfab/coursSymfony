@@ -22,7 +22,6 @@ class AppFixtures extends Fixture
         $p1->setDescription("Description du produit P1");
         $p1->setPrix(53.65);
         $p1->setStock(4);
-        $p1->setImage("fsjdlfjsjflks");
         $p1->setDateCreation(new \DateTime());
         $p1->setCategorie($c1);
         $manager->persist($p1);
@@ -32,7 +31,6 @@ class AppFixtures extends Fixture
         $p2->setDescription("Description du produit P2");
         $p2->setPrix(53.65);
         $p2->setStock(4);
-        $p2->setImage("fsjdlfjsjflks");
         $p2->setDateCreation(new \DateTime());
         $p2->setCategorie($c2);
         $manager->persist($p2);

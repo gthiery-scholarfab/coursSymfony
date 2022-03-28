@@ -5,12 +5,46 @@
 
 {% block body %}
 	{{ form(form, { attr: {'novalidate': 'novalidate'}}) }}
+		<button type="button" class="add_item_link btn btn-primary" data-collection-holder-class="produit_images">Ajouter une image</button>
 		{#
-				    {{ form_start(form) }}
-					{{ form_widget(form.nom, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez le nom du produit'}})}}
-					{{ form_widget(form.description, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez une description'}})}}
-					{{ form_widget(form.prix, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez le prix'}})}}
-					{{ form_widget(form.stock, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez le stock'}})}}
-					{{ form_end(form) }}
-				    #}
+																								    {{ form_start(form) }}
+																									{{ form_widget(form.nom, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez le nom du produit'}})}}
+																									{{ form_widget(form.description, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez une description'}})}}
+																									{{ form_widget(form.prix, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez le prix'}})}}
+																									{{ form_widget(form.stock, {'attr': {'class': 'maclasse', 'placeholder': 'Entrez le stock'}})}}
+																									{{ form_end(form) }}
+																								    #}
+	{% endblock %}
+
+	{% block js %}
+
+		const addImageFormDeleteLink = (item) => {
+			const removeFormButton = document.createElement('button');
+			removeFormButton.innerText = "Supprimer cette image";
+			removeFormButton.classList.add("btn");
+			removeFormButton.classList.add("btn-danger");
+			item.append(removeFormButton);
+			removeFormButton.addEventListener('click', (e) => {
+				e.preventDefault();
+				item.remove();
+			});
+		}
+	
+		const addFormToCollection = (e) => {
+			const collectionHolder = document.querySelector('#'+ e.currentTarget.dataset.collectionHolderClass);
+			const item = document.createElement('div');
+			item.innerHTML = collectionHolder.dataset.prototype.replace(/__name__/g,
+			collectionHolder.dataset.index);
+			collectionHolder.appendChild(item);
+			collectionHolder.dataset.index++;
+			addImageFormDeleteLink(item);
+		}
+	document.querySelectorAll('.add_item_link')
+	.forEach(btn => {
+		btn.addEventListener("click", addFormToCollection)
+	});
+	document.querySelectorAll('div#produit_images div')
+	.forEach(form => {
+		form.addEventListener("click", addImageFormDeleteLink)
+	});
 	{% endblock %}
