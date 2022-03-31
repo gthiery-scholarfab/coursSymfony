@@ -16,6 +16,8 @@ class Image
     #[ORM\Column(type: 'string', length: 255)]
     private $url;
 
+    private $file;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $alt;
 
@@ -37,6 +39,18 @@ class Image
     public function setUrl(string $url): self
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getFile(): ?string
+    {
+        return $this->file;
+    }
+
+    public function setFile(string $file): self
+    {
+        $this->file = $file;
 
         return $this;
     }

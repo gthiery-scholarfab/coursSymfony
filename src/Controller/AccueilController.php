@@ -140,7 +140,7 @@ class AccueilController extends AbstractController
         if ($form->isSubmitted() && $form->isValid() ) {
             /** @var UploadedFile $image */ 
             $image = $form->getData();
-            $imageUrl = $form->get('url')->getData();
+            $imageUrl = $form->get('file')->getData();
             if($imageUrl){
                 $newImageName = uniqid().".".$imageUrl->guessExtension();
                 try{
@@ -160,5 +160,59 @@ class AccueilController extends AbstractController
         return $this->render('accueil/newImage.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/editproduit/{id}', name: 'editproduit')]
+    public function editProduit(Request $request, ManagerRegistry $doctrine, Produit $produit): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $form = $this->createForm(ProduitType::class, $produit);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() ) {
+            $produit = $form->getData();
+            //Gérer l'upload des images
+            $imagesCollection = $form->get('images');
+            foreach($imagesCollection as $imageForm){
+                /** @var UploadedFile $image */ 
+                $image = $imageForm->getData();
+                $imageUrl = $imageForm->get('file')->getData();
+                if($imageUrl){
+                    $newImageName = uniqid().".".$imageUrl->guessExtension();
+                    try{
+                            $imageUrl->move(
+                                $this->getParameter('repimage'),
+                                $newImageName
+                            );
+                    }
+                    catch(e){  }
+                    $image->setUrl($this->getParameter('prefixeimage').$newImageName);
+                }
+                $entityManager->persist($image);
+            }
+
+            $entityManager->persist($produit);
+            $entityManager->flush();
+            $this->addFlash("success", "Votre produit a bien été modifié");
+            return $this->redirectToRoute("produits",[ ]);
+        }        
+        return $this->render('accueil/newProduit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/deleteproduit/{id}', name: 'deleteproduit')]
+    public function deleteProduit(Request $request, ManagerRegistry $doctrine, Produit $produit): Response
+    {
+        //On récupère le produit
+        //$repository = $doctrine->getRepository(Produit::class);
+        //$produit = $repository->find($id);
+        //On récupère l'entityManager
+        $entityManager = $doctrine->getManager();
+        //On indique à l'entityManager de supprimer le produit de la BDD
+        $entityManager->remove($produit);
+        $entityManager->flush();
+        //On redirige vers la liste des produits
+        return $this->redirectToRoute("produits",[ ]);
     }
 }

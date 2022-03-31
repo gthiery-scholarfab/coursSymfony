@@ -9,6 +9,9 @@
 
 	<div class="example-wrapper">
 		<h1>Liste des produits</h1>
+		<a href="{{ path('newproduit') }}">
+			<button class="btn btn-success">Créer un produit</button>
+		</a>
 		{% for message in app.flashes('success') %}
 			<div class="alert alert-success">
 				{{ message }}
@@ -17,13 +20,14 @@
 
 		<ul>
 			{% for produit in listeProduits %}
-				<li>{{ loop.index }}
-					/
-					{{ loop.index0 }}
-					:
-					{{ produit.nom|upper }}
-					-
-					{{ produit.dateCreation | date("d/m/Y h:i:s") }}</li>
+				<li>{{ loop.index }} / {{ loop.index0 }} : {{ produit.nom|upper }} - {{ produit.dateCreation | date("d/m/Y h:i:s") }}
+					<a href="{{ path('editproduit', {id: produit.id}) }}">
+						<button class="btn btn-primary">Modifier le produit</button>
+					</a>
+					<a href="{{ path('deleteproduit', {id: produit.id}) }}">
+						<button class="btn btn-danger">Supprimer le produit</button>
+					</a>
+				</li>
 			{% endfor %}
 		</ul>
 	</div>

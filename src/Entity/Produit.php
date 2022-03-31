@@ -54,7 +54,7 @@ class Produit
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits', cascade: ["persist"])]
     private $categorie;
 
-    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: Image::class, cascade: ["persist"])]
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: Image::class, cascade: ["persist", "remove"])]
     private $images;
 
     public function __construct(){
