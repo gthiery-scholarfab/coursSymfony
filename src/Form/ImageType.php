@@ -18,7 +18,7 @@ class ImageType extends AbstractType
                 'label' => 'Image à uploader'
             ])
             ->add('alt')
-            ->add('Envoyer', SubmitType::class)
+            //->add('Envoyer', SubmitType::class)
         ;
     }
 

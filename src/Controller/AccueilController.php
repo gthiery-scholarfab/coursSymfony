@@ -100,6 +100,26 @@ class AccueilController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() ) {
             $produit = $form->getData();
+            //Gérer l'upload des images
+            $imagesCollection = $form->get('images');
+            foreach($imagesCollection as $imageForm){
+                /** @var UploadedFile $image */ 
+                $image = $imageForm->getData();
+                $imageUrl = $imageForm->get('url')->getData();
+                if($imageUrl){
+                    $newImageName = uniqid().".".$imageUrl->guessExtension();
+                    try{
+                            $imageUrl->move(
+                                $this->getParameter('repimage'),
+                                $newImageName
+                            );
+                    }
+                    catch(e){  }
+                    $image->setUrl($this->getParameter('prefixeimage').$newImageName);
+                }
+                $entityManager->persist($image);
+            }
+
             $entityManager->persist($produit);
             $entityManager->flush();
             $this->addFlash("success", "Votre produit a bien été créé");
