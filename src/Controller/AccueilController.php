@@ -6,9 +6,11 @@ use App\Entity\Image;
 use App\Entity\Produit;
 use App\Form\ImageType;
 use App\Form\ProduitType;
+use Symfony\Component\Mime\Email;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -19,8 +21,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class AccueilController extends AbstractController
 {
     #[Route('/param/{id}', name: 'test')]
-    public function index($id): Response
+    public function index($id, MailerInterface $mailer): Response
     {
+        $email = (new Email())
+            ->from('symfony@ein.school')
+            ->to('guillaume.thiery@adenformations.com')
+            ->subject('Time for Symfony Mailer!')
+            ->text('Sending emails is fun again!')
+            ->html('<p>See Twig integration for better HTML integration!</p>');
+
+        $mailer->send($email);
+
         $url1 = $this->generateUrl('test', array('id' => 'urlTest'));
         $url2 = $this->generateUrl('test', array('id' => 'urlTest'), UrlGeneratorInterface::ABSOLUTE_URL);
         return $this->render('accueil/index.html.twig', [
