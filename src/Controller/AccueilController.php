@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 //#[Route('/test')]
 class AccueilController extends AbstractController
@@ -57,7 +58,7 @@ class AccueilController extends AbstractController
         ]);
     }
 
-    #[Route('/produits', name: 'produits')]
+    #[Route('/', name: 'produits')]
     public function listeProduits(ManagerRegistry $doctrine): Response
     {
         $repository = $doctrine->getRepository(Produit::class);
@@ -176,6 +177,8 @@ class AccueilController extends AbstractController
     #[Route('/editproduit/{id}', name: 'editproduit')]
     public function editProduit(Request $request, ManagerRegistry $doctrine, Produit $produit): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $entityManager = $doctrine->getManager();
         $form = $this->createForm(ProduitType::class, $produit);
 
@@ -212,6 +215,9 @@ class AccueilController extends AbstractController
         ]);
     }
 
+    #use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
+    #[IsGranted('ROLE_USER')]
     #[Route('/deleteproduit/{id}', name: 'deleteproduit')]
     public function deleteProduit(Request $request, ManagerRegistry $doctrine, Produit $produit): Response
     {

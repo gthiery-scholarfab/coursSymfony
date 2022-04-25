@@ -24,6 +24,8 @@ security:
                 login_path: login
                 check_path: login
                 enable_csrf: true
+            logout:
+                path: logout
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -36,6 +38,7 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/newproduit, roles: ROLE_USER }
 
 when@test:
     security:
